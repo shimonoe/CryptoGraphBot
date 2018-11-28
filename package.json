@@ -1,0 +1,19 @@
+{
+  "name": "cryptographbot",
+  "version": "0.1.0",
+  "description": "Final assignment of Laboratório de Redes.",
+  "main": "./src/start.js",
+  "scripts": {
+    "start": "node build",
+    "build": "babel src -d build",
+    "prod": "node ./src/start.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "axios": "^0.18.0",
+    "babel-preset-es2016": "^6.24.1",
+    "discord.js": "^11.4.2"
+  }
+}

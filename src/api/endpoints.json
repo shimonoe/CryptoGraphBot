@@ -1,0 +1,6 @@
+{
+    "assets": "https://api.cryptowat.ch/assets",
+    "pairs": "https://api.cryptowat.ch/pairs",
+    "exchanges": "https://api.cryptowat.ch/exchanges",
+    "markets": "https://api.cryptowat.ch/markets"
+}

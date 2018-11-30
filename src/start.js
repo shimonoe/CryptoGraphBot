@@ -1,21 +1,16 @@
 const client = require('./auth/login');
 const config = require('./config/auth');
 const BotMessages = require('./handlers/richEmbedMessages');
-const { assetsObjectToText } = require('./handlers/formatData');
 const { getAssets, getPairs, getMarkets, getMarketData } = require('./api/fetchData');
 
 const assets = getAssets();
 const pairs = getPairs();
 const markets = getMarkets();
 
-const assetsList = assetsObjectToText(assets);
-const pairsList = "";
-const marketsList = "";
-
 client.on('message', msg => {
     if(msg.author.bot) return;
 
-    const botMsg = new BotMessages(assetsList, pairsList, marketsList);
+    const botMsg = new BotMessages(assets, pairs, markets);
     const userCMD = msg.content.split(/\s+/);
     if (userCMD[0] == '!cgbot') {
         switch (userCMD[1]) {
@@ -23,7 +18,13 @@ client.on('message', msg => {
                 msg.channel.send(botMsg.onHelp());
                 break;
             case 'assets':
-                msg.channel.send(botMsg.onAssets());
+                botMsg.onAssets((isNaN(parseInt(userCMD[userCMD.length -1])) ? 0 : parseInt(userCMD[userCMD.length - 1])))
+                    .then(embed => {
+                    msg.channel.send(embed);
+                })
+                    .catch(error => {
+                        console.log(error);
+                    });
                 break;
             case 'pairs':
                 if (userCMD[2]) {

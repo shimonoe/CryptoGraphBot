@@ -1,8 +1,11 @@
 const { RichEmbed } = require("discord.js");
 
 class BotMessages {
-    constructor(){
-        const embed = new RichEmbed();
+    constructor(assetsList, pairsList, marketsList){
+        this.embed = new RichEmbed();
+        this.assetsText = assetsList;
+        this.pairsText = pairsList;
+        this.marketsText = marketsList;
     }
 
     setBaseTemplate() {
@@ -26,28 +29,46 @@ class BotMessages {
 
     onHelp() {
         this.resetTemplate();
-        this.embed.addField("This is how to communicate with me:", "!cgbot <market> <cryptocurrency> <period>")
+        this.embed.addField("This is how to communicate with me:", "!cgbot <pair> <market> <period>")
             .addField("Arguments:",
-            `<market>: Select one of those listed in command "!cgbot markets"
-            <cryptocurrency>: Use command "!cgbot assets" to view available options
-            <period>: Options avalilable are 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 12h, 1d, 3d, 1w
-            `)
-            .addField("Example:", "!cgbot kraken btcusa 15m")
+                `<assets>: Use command "!cgbot assets" to view available assets
+                <pair>: Use command "!cgbot pairs <asset>" to view possible quotes for a specific asset
+                <market>: Select one of those listed in command "!cgbot markets <asset>"
+                <period>: Options avalilable are 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 12h, 1d, 3d, 1w
+                `)
+            .addField("Example:", "!cgbot btcusa kraken 15m")
         return this.embed;
     }
 
-    onMarkets() {
+    onAssets() {
         this.resetTemplate();
-        this.embed.addField("Here is the list of available markets.")
+        this.assetsText.then(text => {
+            this.embed.addField("Here is the list of available assets.", "---")
+                .addField("Use ONE of those codes on your query:", "lista!");
+            return this.embed;
+        })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+
+    onPairs(asset) {
+        this.resetTemplate();
+
+        var str = asset.toUpperCase();
+        this.embed.addField(`Here is the list of available pairs for ${str}.`, "---")
             .addField("Use ONE of those codes on your query:",
             `TODO: Get the list from the api endpoint
             `);
         return this.embed;
     }
 
-    onAssets() {
+    onMarkets(asset) {
         this.resetTemplate();
-        this.embed.addField("Here is the list of available assets.")
+
+        var str = asset.toUpperCase();
+        this.embed.addField(`Here is the list of available markets for ${str}.`,
+            `${str.slice(0, 3)}->${str.slice(3,-1)}`)
             .addField("Use ONE of those codes on your query:",
             `TODO: Get the list from the api endpoint
             `);

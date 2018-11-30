@@ -39,7 +39,13 @@ client.on('message', msg => {
                 }
             case 'markets':
                 if (userCMD[2]) {
-                    msg.channel.send(botMsg.onMarkets(userCMD[2]));
+                    botMsg.onMarkets(userCMD[2])
+                        .then(embed => {
+                            msg.channel.send(embed);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
                     break;
                 }
             default:

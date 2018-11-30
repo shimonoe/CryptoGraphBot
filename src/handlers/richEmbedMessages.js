@@ -15,7 +15,7 @@ class BotMessages {
             .setColor(15304469)
             .setFooter("\nProject made for the final project assignment of MCZA011-17 - Laboratório de Redes.")
             .setTimestamp()
-            .setURL("https://ufabc.edu.br");
+            .setURL("https://github.com/shimonoe/CryptoGraphBot");
         return template;
     }
 

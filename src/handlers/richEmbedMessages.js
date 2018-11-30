@@ -1,7 +1,6 @@
 const { RichEmbed } = require("discord.js");
 
 class BotMessages {
-    //constructor(assetsList, pairsList, marketsList){
     constructor(assets, pairs, markets){
         this.embed = new RichEmbed();
         this.assets = assets;
@@ -45,7 +44,7 @@ class BotMessages {
         this.resetTemplate();
         this.embed.addField("Here is the list of available assets.", "Use ONE of those codes on your query");
         try {
-            this.assets.then(obj => {
+            await this.assets.then(obj => {
                 var coinList = Object.keys(obj).sort();
                 var chunks = [];
                 while (coinList.length)
@@ -71,16 +70,23 @@ class BotMessages {
         this.resetTemplate();
 
         var str = asset.toUpperCase();
-        this.embed.addField(`Here is the list of available pairs for ${str}.`, "Use ONE of those codes on your query");
+        this.embed.addField(`Here is the list of available pairs for **${str}.**`, "Use ONE of those codes on your query");
         try {
-            this.pairsText.then(text => {
-                console.log(text);
+            await this.pairs.then(obj => {
+                try {
+                    var pairsOf = obj[asset].map(p => {
+                        return `${asset + p} (${asset} -> ${p})`;
+                    });
+                    this.embed.addField("pair code (asset quoted to another asset)", pairsOf);
+                } catch (error) {
+                    console.log(error);
+                    this.resetTemplate();
+                    this.embed.addField(`Asset **${str}** not found!`, "Use **!cgbot assets** to get a valid code.");
+                }
             });
         } catch (error) {
             console.log(error);
         }
-
-
         return this.embed;
     }
 

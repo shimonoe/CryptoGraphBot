@@ -20,15 +20,21 @@ client.on('message', msg => {
             case 'assets':
                 botMsg.onAssets((isNaN(parseInt(userCMD[userCMD.length -1])) ? 0 : parseInt(userCMD[userCMD.length - 1])))
                     .then(embed => {
-                    msg.channel.send(embed);
-                })
+                        msg.channel.send(embed);
+                    })
                     .catch(error => {
                         console.log(error);
                     });
                 break;
             case 'pairs':
                 if (userCMD[2]) {
-                    msg.channel.send(botMsg.onPairs(userCMD[2]));
+                    botMsg.onPairs(userCMD[2])
+                        .then(embed => {
+                            msg.channel.send(embed);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
                     break;
                 }
             case 'markets':

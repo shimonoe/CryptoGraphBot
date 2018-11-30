@@ -1,11 +1,12 @@
 const { RichEmbed } = require("discord.js");
 
 class BotMessages {
-    constructor(assetsList, pairsList, marketsList){
+    //constructor(assetsList, pairsList, marketsList){
+    constructor(assets, pairs, markets){
         this.embed = new RichEmbed();
-        this.assetsText = assetsList;
-        this.pairsText = pairsList;
-        this.marketsText = marketsList;
+        this.assets = assets;
+        this.pairs = pairs;
+        this.markets = markets;
     }
 
     setBaseTemplate() {
@@ -40,26 +41,46 @@ class BotMessages {
         return this.embed;
     }
 
-    onAssets() {
+    async onAssets(page) {
         this.resetTemplate();
-        this.assetsText.then(text => {
-            this.embed.addField("Here is the list of available assets.", "---")
-                .addField("Use ONE of those codes on your query:", "lista!");
-            return this.embed;
-        })
-            .catch(error => {
-                console.log(error);
-            })
+        this.embed.addField("Here is the list of available assets.", "Use ONE of those codes on your query");
+        try {
+            this.assets.then(obj => {
+                var coinList = Object.keys(obj).sort();
+                var chunks = [];
+                while (coinList.length)
+                    chunks.push(coinList.splice(0, 10).map(coin => {
+                        return `${coin}: ${obj[coin]}`;
+                    }));
+
+                if (page < chunks.length && page >= 0) {
+                    this.embed.addField("coin name: code", chunks[page])
+                        .addField(`Page: ${page} of ${chunks.length - 1}`,
+                            "Indicate page number to get more coins: **!cgbot assets <page number>**");
+                } else {
+                    this.embed.addField("Error", `Must indicate page between 0 and ${chunks.length - 1}`);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+        return this.embed;
     }
 
-    onPairs(asset) {
+    async onPairs(asset) {
         this.resetTemplate();
 
         var str = asset.toUpperCase();
-        this.embed.addField(`Here is the list of available pairs for ${str}.`, "---")
-            .addField("Use ONE of those codes on your query:",
-            `TODO: Get the list from the api endpoint
-            `);
+        this.embed.addField(`Here is the list of available pairs for ${str}.`, "Use ONE of those codes on your query");
+        try {
+            this.pairsText.then(text => {
+                console.log(text);
+            });
+        } catch (error) {
+            console.log(error);
+        }
+
+
         return this.embed;
     }
 

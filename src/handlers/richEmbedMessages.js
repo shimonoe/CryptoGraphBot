@@ -33,7 +33,7 @@ class BotMessages {
             .addField("Arguments:",
                 `<assets>: Use command "!cgbot assets" to view available assets
                 <pair>: Use command "!cgbot pairs <asset>" to view possible quotes for a specific asset
-                <market>: Select one of those listed in command "!cgbot markets <asset>"
+                <market>: Select one of those listed in command "!cgbot markets <pair>"
                 <period>: Options avalilable are 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 12h, 1d, 3d, 1w
                 `)
             .addField("Example:", "!cgbot btcusa kraken 15m")
@@ -90,15 +90,27 @@ class BotMessages {
         return this.embed;
     }
 
-    onMarkets(asset) {
+    async onMarkets(pair) {
         this.resetTemplate();
 
-        var str = asset.toUpperCase();
+        if (pair.length < 5) {
+            this.embed.addField(`Invalid pair code ${pair}`, "Please use **!cgbot pairs <asset>** to get a valid code.");
+            return this.embed;
+        }
+
+        var str = pair.toUpperCase();
         this.embed.addField(`Here is the list of available markets for ${str}.`,
-            `${str.slice(0, 3)}->${str.slice(3,-1)}`)
-            .addField("Use ONE of those codes on your query:",
-            `TODO: Get the list from the api endpoint
-            `);
+            `Quote: ${str.slice(0, 3)}->${str.slice(3,str.length)}`)
+
+        try {
+            await this.markets.then(obj => {
+                this.embed.addField("codes:", obj[pair].sort());
+            });
+        } catch (error) {
+            console.log(error);
+            this.embed.addField("I'm sorry! I think there is no active markets for this pair.", "Please try another nome.");
+        }
+
         return this.embed;
     }
 

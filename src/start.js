@@ -1,7 +1,7 @@
 const client = require('./auth/login');
 const config = require('./config/auth');
 const BotMessages = require('./handlers/richEmbedMessages');
-const { getAssets, getPairs, getMarkets, getMarketData } = require('./api/fetchData');
+const { getAssets, getPairs, getMarkets } = require('./api/fetchData');
 
 const assets = getAssets();
 const pairs = getPairs();
@@ -49,7 +49,16 @@ client.on('message', msg => {
                     break;
                 }
             default:
-                msg.channel.send(botMsg.onError());
+                if (userCMD.length == 4 || userCMD.length == 5)
+                    botMsg.onPlot(...userCMD.slice(1, userCMD.length))
+                        .then(embed => {
+                            msg.channel.send(embed);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                else
+                    msg.channel.send(botMsg.onError());
         }
     }
 });

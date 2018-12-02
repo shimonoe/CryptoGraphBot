@@ -1,4 +1,8 @@
 const { RichEmbed } = require("discord.js");
+const { getMarketData } = require("../api/fetchData");
+const allowedPeriods = require('../api/timeperiods');
+const dataFormatter = require('../charts/dataFormatter');
+const DrawChart = require('../charts/drawChart');
 
 class BotMessages {
     constructor(assets, pairs, markets){
@@ -6,6 +10,7 @@ class BotMessages {
         this.assets = assets;
         this.pairs = pairs;
         this.markets = markets;
+        this.drawChart = null;
     }
 
     setBaseTemplate() {
@@ -29,14 +34,15 @@ class BotMessages {
 
     onHelp() {
         this.resetTemplate();
-        this.embed.addField("This is how to communicate with me:", "!cgbot <pair> <market> <period>")
+        this.embed.addField("This is how to communicate with me:", "!cgbot <pair> <market> <period> <graph type>")
             .addField("Arguments:",
                 `<assets>: Use command "!cgbot assets" to view available assets
                 <pair>: Use command "!cgbot pairs <asset>" to view possible quotes for a specific asset
                 <market>: Select one of those listed in command "!cgbot markets <pair>"
                 <period>: Options avalilable are 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 12h, 1d, 3d, 1w
+                <graph type> (Optional) Pass 'true' if you want to plot the graph without simple moving average calculation.
                 `)
-            .addField("Example:", "!cgbot btcusa kraken 15m")
+            .addField("Example:", "!cgbot btcusd kraken 15m true")
         return this.embed;
     }
 
@@ -114,9 +120,36 @@ class BotMessages {
         return this.embed;
     }
 
+    async onPlot(pair, market, period, full=false) {
+        this.resetTemplate();
+        try {
+            await getMarketData(market, pair, "price")
+                .then(res => {
+                    var txt = `Current **${pair.slice(0,3).toUpperCase()}** price is **${res.price}** (${pair.slice(3,pair.length).toUpperCase()})`;
+                    this.embed.addField(txt, "Click on image then 'open original' to view the fullsize version.");
+                });
+            await getMarketData(market, pair, "ohlc", period)
+                .then(ohlc => {
+                    const quotes = ohlc[allowedPeriods[period]];
+                    const data = dataFormatter(quotes, full);
+                    this.drawChart = new DrawChart(data);
+                });
+            await this.drawChart.getImageBuffer()
+                .then(img => {
+                    this.embed.attachFile(img);
+                    this.drawChart.destroy();
+                });
+        } catch (error) {
+            console.log(error);
+            this.embed.addField("I'm sorry! Somethin went wrong...");
+        }
+        return this.embed;
+    }
+
     onError() {
         this.resetTemplate();
-        this.embed.addField("I'm sorry!", "Type '!cgbot help' to get available comands.")
+        this.embed
+            .addField("I'm sorry!", "Type '!cgbot help' to get available comands.")
             .setColor(16711680)
             .setImage("https://cdn.dribbble.com/users/3016/screenshots/1815466/sadbot.png");
         return this.embed;

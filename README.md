@@ -1,6 +1,10 @@
 # CryptoGraphBot
 
-![discord_chatbot](https://img.shields.io/badge/discord-chatbot-blue.svg?logo=discord&longCache=true&style=popout-square&colorB=6e85d3) A Chatbot for Discord to get cryptocurrency graphs. :graph:
+![discord_chatbot](https://img.shields.io/badge/discord-chatbot-blue.svg?logo=discord&longCache=true&style=popout-square&colorB=6e85d3)
+
+
+
+A Chatbot for Discord to get cryptocurrency graphs. :graph:
 
 
 

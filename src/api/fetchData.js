@@ -1,23 +1,6 @@
 const axios = require('axios');
 const endpoints = require('./endpoints');
 
-/*
-const getAssets = async () => {
-    try {
-        return await axios.get(endpoints.assets);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const countAssets = async () => {
-    const assets = await getAssets();
-    if (assets.data.result) {
-        return assets.data.result;
-    }
-}
-*/
-
 const getAssets = async () => {
     return await axios.get(endpoints.assets)
     .then(response => {
@@ -78,8 +61,8 @@ const getMarkets = async () => {
     });
 }
 
-const getMarketData = async (market, pair, route) => {
-    const url = `${endpoints.markets}/${market}/${pair}/${route}`;
+const getMarketData = async (market, pair, route, period) => {
+    const url = (period ?  `${endpoints.markets}/${market}/${pair}/${route}?periods=${period}` : `${endpoints.markets}/${market}/${pair}/${route}`);
     return await axios.get(url)
         .then(response => {
             return response.data.result;

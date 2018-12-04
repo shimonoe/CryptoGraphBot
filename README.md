@@ -26,6 +26,8 @@ Assuming that you already installed [Node.js and npm](https://nodejs.org/), clon
 
 `git clone https://github.com/shimonoe/CryptoGraphBot.git`
 
+Also, you nedd to install cairo. Follow instructions on this [link](https://www.cairographics.org/download/).
+
 Enter repository folder and install dependencies:
 
 `cd CryptoGraphBot | npm i`

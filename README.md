@@ -4,7 +4,7 @@
 
 
 
-A Chatbot for Discord to get cryptocurrency graphs. :graph:
+A Chatbot for Discord to get cryptocurrency graphs using [Discord.js](https://github.com/discordjs/discord.js/), [Chartjs-node](https://github.com/vmpowerio/chartjs-node) and [CryptoWatch](https://cryptowat.ch/) API.
 
 
 
